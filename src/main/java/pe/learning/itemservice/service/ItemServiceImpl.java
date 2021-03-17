@@ -1,16 +1,14 @@
 package pe.learning.itemservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pe.learning.itemservice.model.Item;
 import pe.learning.itemservice.model.Product;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,9 +19,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findAll() {
-        List<Product> products = Arrays
-                .asList(restTemplate.getForObject("http://localhost:8001/products/", Product[].class));
+        List<Product> products = getProductListRTExchange();
         return products.stream().map(Item::new).collect(Collectors.toList());
+    }
+
+    private List<Product> getProductListRTExchange() {
+        return restTemplate.exchange("http://localhost:8001/products/",
+                                     HttpMethod.GET,
+                                     null,
+                                     new ParameterizedTypeReference<List<Product>>() {
+                                     })
+                           .getBody();
     }
 
     @Override
@@ -32,5 +38,10 @@ public class ItemServiceImpl implements ItemService {
         pathVariables.put("id", id.toString());
         Product product = restTemplate.getForObject("http://localhost:8001/product/{id}", Product.class, pathVariables);
         return new Item(product,quantity);
+    }
+
+    private List<Product> getProductListRTGetForEntity() {
+        Product[] body = restTemplate.getForEntity("http://localhost:8001/products/", Product[].class).getBody();
+        return Arrays.asList(Objects.requireNonNull(body));
     }
 }
