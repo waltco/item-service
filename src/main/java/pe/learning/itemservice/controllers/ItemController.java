@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class ItemController {
 
-    @Qualifier("productClientRestTemplate")
+    @Qualifier("productClientFeign")
     @Autowired
     ProductClient productClient;
 
