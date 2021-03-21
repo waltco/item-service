@@ -11,9 +11,9 @@ public class Item {
     private Product product;
     private Integer quantity;
 
-    public Double getTotal() {
-        return product.getPrice() * quantity.doubleValue();
-    }
+//    public Double getTotal() {
+//        return product.getPrice() * quantity.doubleValue();
+//    }
 
     public Item(Product product) {
         this.product = product;
